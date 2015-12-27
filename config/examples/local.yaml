@@ -1,0 +1,10 @@
+db:
+    database: garagedoor_dev
+    username: garagedoor
+    password: garagedoor
+
+    # host defaults to 'localhost'
+    # host: 'localhost'
+
+    # encoding defaults to 'utf8'
+    # encoding: 'utf8'

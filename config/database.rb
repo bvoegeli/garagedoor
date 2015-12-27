@@ -32,11 +32,11 @@ DB_NAME = db.path[1..-1]
 #   to :development
 
 ActiveRecord::Base.establish_connection(
-  :adapter  => db.scheme == 'postgres' ? 'postgresql' : db.scheme,
-  :host     => db.host,
-  :port     => db.port,
-  :username => db.user,
-  :password => db.password,
-  :database => DB_NAME,
-  :encoding => 'utf8'
+  :adapter  => 'sqlite3',
+  :host     => LOCAL_CONFIG['db']['host'] || 'localhost',
+  :port     => LOCAL_CONFIG['db']['port'],
+  :username => LOCAL_CONFIG['db']['username'],
+  :password => LOCAL_CONFIG['db']['password'],
+  :database => LOCAL_CONFIG['db']['database'],
+  :encoding => LOCAL_CONFIG['db']['encoding'] || 'utf8'
 )

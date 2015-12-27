@@ -37,7 +37,6 @@ GEM
     multi_json (1.10.1)
     nokogiri (1.6.6.2)
       mini_portile (~> 0.6.0)
-    pg (0.18.1)
     rack (1.5.2)
     rack-protection (1.5.3)
       rack
@@ -72,6 +71,7 @@ GEM
       rack-test
       sinatra (~> 1.4.0)
       tilt (~> 1.3)
+    sqlite3 (1.3.11)
     thread_safe (0.3.4)
     tilt (1.4.1)
     tzinfo (1.2.2)
@@ -89,7 +89,6 @@ DEPENDENCIES
   database_cleaner
   factory_girl
   faker
-  pg
   rack (= 1.5.2)
   rack-test
   rake
@@ -98,3 +97,7 @@ DEPENDENCIES
   shoulda-matchers
   sinatra
   sinatra-contrib
+  sqlite3
+
+BUNDLED WITH
+   1.10.6
