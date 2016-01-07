@@ -12,8 +12,12 @@ import RPi.GPIO as GPIO
 import time
 import simple_logger
 
+
+poll_interval     = 0.2 ## state polling period, in seconds
+button_press_time = 0.5 ## how long to short the button terminal together when opening/closing the garage door
+
 ### Hardware:
-###     Button press detector:
+###     Button press detector: (same for open/closed detectors)
 ###         Discrete NMOS + 1kOhm resistor:
 ###             Gate   = 5V garage door button positive terminal
 ###             Source = GND
@@ -35,7 +39,6 @@ import simple_logger
 ###                 Drain = Piezo negative terminal
 ###             Piezo buzzer terminals = Rpi 5V supply (or raw wall wart output?), NMOS drain
 ###     Should the buzzer be driven by a MOSFET?  Or direct from an output?
-
 
 # Pin Definitons #### TODO: Change these!
 alarm_pin = 2 
@@ -70,7 +73,7 @@ def read_state():
     state["indoor_button_detected"] = GPIO.input(button_detect_pin)
     state["web_button_detected"] = False #### -- TODO: how to check this?
     state["alarm_on"] = alarm_on
-    state["local_time"] = time.localtime()
+    state["local_time"] = get_local_time()
     return state
 
 def get_local_time(): 
@@ -78,11 +81,21 @@ def get_local_time():
     time_structure=time.localtime()
     return (time_structure.tm_hour*3600.0) + (time_structure.tm_min*60.0) + (time_structure.tm_sec)
 
+def force_button_press():
+    ### emulate pressing the physical open/close button in the garge by shorting the terminals
+    GPIO.output(button_force_pin,1)
+    time.sleep(button_press_time/2.0)
+    current_state = read_state()
+    logger.store(current_state)
+    last_state = current_state
+    time.sleep(button_press_time/2.0)
+    GPIO.output(button_force_pin,0)
+    
 current_state = read_state()
 logger.store(current_state) ### Create a first state record
 while True:
     last_state = current_state
-    time.sleep(0.1) ## 100ms logging interval
+    time.sleep(poll_interval)
     #### check alarms
     time_now = get_local_time()
     if ((time_now > alarm_start_time) or (time_now < alarm_stop_time))\
@@ -94,14 +107,15 @@ while True:
         alarm_on = False
     if (get_local_time() >= force_close_time) and (last_state["local_time"] < force_close_time)\
             and (not current_state["fully_closed"]):
-        GPIO.output(button_force_pin,1)
-        time.sleep(0.1)
-        current_state = read_state()
-        logger.store(current_state)
-        last_state = current_state
-        time.sleep(0.1) ### TODO: is 200ms long enough?
-        GPIO.output(button_force_pin,0)
-        time.sleep(0.1)
+        force_button_press()
+        time.sleep(poll_interval)
+    #### TODO: Look for presence of file indicating that web button has been pressed
+    ####    If detected, execute force_button_press() and then delete the file
     current_state = read_state()
-    if current_state != last_state:
+    state_changed = False
+    for column in current_state.keys():
+        if column != "local_time":
+            if current_state[column] != last_state[column]:
+                state_changed = True
+    if state_changed:
         logger.store(current_state)

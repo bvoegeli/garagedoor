@@ -35,6 +35,7 @@ class logger(object):
                 self.cur.execute(txt)
                 self._commit()
             except sqlite3.OperationalError as e:
+                #print("Note: Got sqlite3.OperationalError on first store attempt.  Maybe table already exists?")
                 pass ### assume this is because table already exists...
             self.first_store = False
         txt = "insert into " + self.table_name + " ( "
@@ -52,6 +53,7 @@ class logger(object):
         txt += "datetime());"
         try:
             self.cur.execute(txt) 
+            self._commit()
         except sqlite3.OperationalError as e: ## on exception, try inserting any new columns
             print ("sqlite3.OperationalError Exception occurred!")
             print ("---> Are you sure all of the columns in the 'data' dictionary argument")
