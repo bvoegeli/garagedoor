@@ -1,0 +1,22 @@
+th {
+  text-align: center;
+  padding: 3px;
+}
+
+td {
+  text-align: center;
+  padding: 3px;
+}
+
+body {
+	margin-left: 10%;
+	margin-right: 10%;
+}
+.deck-table-cell {
+	border: 1px solid grey;
+    /*border-top: none;
+    border-left: none;*/
+}
+table {
+
+}

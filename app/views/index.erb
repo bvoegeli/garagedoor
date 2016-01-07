@@ -1,0 +1,22 @@
+<h1>Garage Door Web Dashboard</h1>
+
+<table>
+<tr>
+	<th class='deck-table-cell'>Fully Open</th>
+	<th class='deck-table-cell'>Fully Closed</th>
+    <th class='deck-table-cell'>Indoor Button Pressed</th>
+	<th class='deck-table-cell'>Web Button Pressed</th>
+	<th class='deck-table-cell'>Alarm On</th>
+</tr><br>
+	<tr>
+	<td class='deck-table-cell'><%=@current_state.fully_open %></td>
+	<td class='deck-table-cell'><%=@current_state.fully_closed %></td>
+	<td class='deck-table-cell'><%=@current_state.indoor_button_pressed %></td>
+	<td class='deck-table-cell'><%=@current_state.web_button_pressed %></td>
+	<td class='deck-table-cell'><%=@current_state.alarm_on %></td>
+	</tr>
+</table><br>
+<form action="/open_and_close">
+  <input type="submit" value="Open/Close Door">
+</form>
+<p><%= @output %> </p>
